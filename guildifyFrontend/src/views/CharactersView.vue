@@ -1,20 +1,23 @@
 <template>
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
-        <div class="container-fluid">
-            <router-link to="/main" class="navbar-brand" href="#">Guildify</router-link>
-        <div>
-            <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                <li class="nav-item">
-                    <router-link to="/main" class="nav-link" href="#">Home</router-link>
-                </li>
-                <li class="nav-item">
-                  <router-link to="/register" class="nav-link" @click.native="handleLogout" href="#">Logout</router-link>
-              </li>
-            </ul>
-        </div>
-        </div>
-    </nav>
-    <div class="container mt-5">
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+    <div class="container-fluid">
+      <router-link to="/main" class="navbar-brand" href="#">Guildify</router-link>
+      <div>
+        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+          <li class="nav-item">
+            <router-link to="/main" class="nav-link" href="#">Home</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/newcharacter" class="nav-link" href="#">Add New Character</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/register" class="nav-link" @click.native="handleLogout" href="#">Logout</router-link>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="container mt-5">
     <div v-if="chars.length > 0">
       <h2 class="text-center">My Characters</h2>
       <br>
@@ -40,28 +43,49 @@
     </div>
   </div>
 
+  <!-- Dropdown for selecting a character to delete -->
+  <div class="mt-4 text-center">
+    <div class="dropdown d-inline-block me-2">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="charDropdown" data-bs-toggle="dropdown"
+        aria-expanded="false">
+        {{ selectedCharName || 'Select Character' }}
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="charDropdown">
+        <li v-for="char in chars" :key="char.charId">
+          <a class="dropdown-item" @click="selectedChar = char.charId; selectedCharName = char.charName">
+            {{ char.charName }}
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Delete Button -->
+    <button class="btn btn-danger d-inline-block" @click="deleteCharacter(selectedChar)">DELETE</button>
+  </div>
 </template>
 
 <script>
 import axios from 'axios';
-export default { 
+export default {
   name: 'CharactersView',
-  data(){
-    return{
-      chars: []  
+  data() {
+    return {
+      chars: [],
+      selectedChar: null,
+      selectedCharName: null
     }
   },
   methods: {
-    async handleLogout(){
-      try{
+    async handleLogout() {
+      try {
         localStorage.setItem('jwt', '');
         this.$router.push('/');
-      } catch (error){
+      } catch (error) {
         console.error("Error signing out: ", error.response ? error.response.data : error.message);
       }
     },
-    async getMyChars(){
-      try{
+    async getMyChars() {
+      try {
         const jwt = localStorage.getItem('jwt');
         if (!jwt) {
           this.error = 'No JWT found!';
@@ -73,13 +97,42 @@ export default {
           }
         });
         this.chars = response.data;
-      } catch (error){
+      } catch (error) {
         alert(error.response.data.exceptionMessage);
+      }
+    },
+    async deleteCharacter() {
+      const jwt = localStorage.getItem('jwt');
+      if (!jwt) {
+        this.error = 'No JWT found!';
+        return;
+      }
+      if (!this.selectedChar) {
+        alert("Please select a character to delete.");
+        return;
+      }
+
+      try {
+        const response = await axios.delete(`http://localhost:8081/user/gamechars/${this.selectedChar}`, {
+          headers: {
+            'Authorization': `Bearer ${jwt}`
+          }
+        });
+
+        if (response.status === 200) {
+          alert('Character deleted successfully.');
+          this.selectedChar = null; 
+          this.selectedCharName = null;
+          location.reload();
+        }
+      } catch (error) {
+        console.error("Error deleting character: ", error.response ? error.response.data : error.message);
+        alert("Failed to delete character.");
       }
     }
   },
   async mounted() {
-    if(localStorage.getItem("jwt") == null || localStorage.getItem("jwt") == '' ){
+    if (localStorage.getItem("jwt") == null || localStorage.getItem("jwt") == '') {
       alert("Please sign in.");
       this.$router.push('/');
     } else {
@@ -90,5 +143,4 @@ export default {
 </script>
 
 
-<style>
-</style>
+<style></style>

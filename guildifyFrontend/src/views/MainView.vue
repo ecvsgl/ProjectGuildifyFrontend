@@ -19,6 +19,14 @@
     <h1>Welcome to Guildify!</h1>
   </div>
 
+  <div class="container">
+    <div class="row">
+      <div class="col-6 custom-border">
+        <!-- Your content here -->
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi totam quae animi adipisci quidem voluptatibus?Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam maxime esse, atque eum quos ullam!</p>
+      </div>
+    </div>
+  </div>
 
 </template>
 
@@ -48,5 +56,8 @@ export default {
 </script>
 
 <style>
-
+.custom-border {
+  border: 2px solid #000;
+  padding: 5px;
+}
 </style>

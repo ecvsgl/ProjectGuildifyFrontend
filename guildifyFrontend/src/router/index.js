@@ -4,6 +4,7 @@ import RegisterView from '../views/RegisterView.vue'
 import MainView from '../views/MainView.vue'
 import CharactersView from '../views/CharactersView.vue'
 import CharacterDetail from '../views/CharacterDetail.vue'
+import NewCharacterView from '../views/NewCharacterView.vue'
 
 
 const router = createRouter({
@@ -34,8 +35,13 @@ const router = createRouter({
       name: 'CharacterDetail',
       component: CharacterDetail
 
-    }
+    },
+    {
+      path: '/newcharacter',
+      name: 'NewCharacter',
+      component: NewCharacterView
 
+    }
   ]
 })
 

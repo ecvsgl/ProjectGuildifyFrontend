@@ -8,6 +8,9 @@
             <router-link to="/characters" class="nav-link" href="#">My Characters</router-link>
           </li>
           <li class="nav-item">
+            <router-link to="/newguild" class="nav-link" href="#">Create New Guild</router-link>
+          </li>
+          <li class="nav-item">
             <router-link to="/register" class="nav-link" @click.native="handleLogout" href="#">Logout</router-link>
           </li>
         </ul>
@@ -100,7 +103,9 @@
             <h5 class="card-title">Guilds</h5>
             <ul class="list-styled">
               <li v-for="guild in guilds" :key="guild.guildId">
+                <router-link :to="{ name: 'GuildDetail', params: { id: guild.guildId } }" class="text-decoration-none">
                 {{ guild.guildName }}
+                </router-link>
               </li>
             </ul>
           </div>

@@ -5,7 +5,7 @@
             <div>
                 <ul class="navbar-nav me-auto mb-2 mb-md-0">
                     <li class="nav-item">
-                        <router-link to="/characters" class="nav-link" href="#">My Characters</router-link>
+                        <router-link to="/main" class="nav-link" href="#">Home</router-link>
                     </li>
                     <li class="nav-item">
                         <router-link to="/register" class="nav-link" @click.native="handleLogout"
@@ -15,27 +15,22 @@
             </div>
         </div>
     </nav>
-    <h2 class="text-center">Add New Character</h2>
+    <h2 class="text-center">Create New Guild</h2>
 
     <main class="form-signin w-100 m-auto">
         <form>
             <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="charName" v-model="charName" placeholder="Character Name">
-                <label for="charName">Character Name</label>
-            </div>
-            <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="charLevel" v-model="charLevel" placeholder="Character Level">
-                <label for="charLevel">Character Level</label>
+                <input type="text" class="form-control" id="guildName" v-model="guildName" placeholder="Guild Name">
+                <label for="guildName">Guild Name</label>
             </div>
             <div class="form-floating mb-3">
                 <select class="form-control" id="gameName" v-model="gameName">
                     <option disabled value="">Please select one</option>
                     <option v-for="game in allGames" :key="game.gameId" :value="game.gameName">{{ game.gameName }}</option>
                 </select>
-
                 <label for="gameName">Select Game</label>
             </div>
-            <button class="btn btn-primary w-100 py-2" @click.prevent="addNewCharacter" type="submit">Add Character</button>
+            <button class="btn btn-primary w-100 py-2" @click.prevent="addNewGuild" type="submit">Create Guild</button>
             <p class="mt-5 mb-3 text-body-secondary">&copy; Guildify 2023</p>
         </form>
     </main>
@@ -47,9 +42,8 @@ export default {
     name: 'NewCharacterView',
     data() {
         return {
-            charName: null,
-            charLevel: null,
-            userDisplayName: null,
+            guildName: null,
+            guildLeaderUserDisplayName: null,
             gameName: null,
             allGames: [],
         };
@@ -63,13 +57,12 @@ export default {
                 console.error("Error signing out: ", error.response ? error.response.data : error.message);
             }
         },
-        async addNewCharacter() {
+        async addNewGuild() {
             const jwt = localStorage.getItem('jwt');
             try {
-                const response = await axios.post(`http://localhost:8081/user/gamechars`, JSON.stringify({
-                    charName: this.charName,
-                    charLevel: this.charLevel,
-                    userDisplayName: this.userDisplayName,
+                const response = await axios.post(`http://localhost:8081/user/newguild`, JSON.stringify({
+                    guildName: this.guildName,
+                    guildLeaderUserDisplayName: this.guildLeaderUserDisplayName,
                     gameName: this.gameName
                 }),
                     {
@@ -78,10 +71,10 @@ export default {
                             'Content-Type': 'application/json'
                         }
                     });
-                alert("Character created successfully.");
-                location.reload();
+                alert("Guild successfully created.");
+                this.$router.push('/main');
             } catch (error) {
-                alert(error);
+                alert(error.response.data.exceptionMessage);
             }
         },
         async getGames() {
@@ -94,7 +87,7 @@ export default {
                 });
                 this.allGames = response.data;
                 if (this.allGames.length > 0) {
-                    this.userDisplayName = this.allGames[0].createdBy;
+                    this.guildLeaderUserDisplayName = this.allGames[0].createdBy;
                 } else {
                     console.warn('allGames array is empty.');
                 }
@@ -109,6 +102,7 @@ export default {
             this.$router.push('/');
         } else {
             await this.getGames();
+
         }
     }
 }

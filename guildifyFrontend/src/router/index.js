@@ -5,6 +5,8 @@ import MainView from '../views/MainView.vue'
 import CharactersView from '../views/CharactersView.vue'
 import CharacterDetail from '../views/CharacterDetail.vue'
 import NewCharacterView from '../views/NewCharacterView.vue'
+import GuildDetail from '../views/GuildDetail.vue'
+import NewGuildView from '../views/NewGuildView.vue'
 
 
 const router = createRouter({
@@ -40,6 +42,18 @@ const router = createRouter({
       path: '/newcharacter',
       name: 'NewCharacter',
       component: NewCharacterView
+
+    },
+    {
+      path: '/newguild',
+      name: 'NewGuild',
+      component: NewGuildView
+
+    },
+    {
+      path: '/guild/:id',
+      name: 'GuildDetail',
+      component: GuildDetail
 
     }
   ]
